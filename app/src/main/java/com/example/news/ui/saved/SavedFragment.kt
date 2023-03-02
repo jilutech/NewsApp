@@ -7,15 +7,16 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.news.databinding.FragmentDashboardBinding
+import com.example.news.MainActivity
+import com.example.news.databinding.FragmentSavedBinding
+import com.example.news.ui.NewsViewModel
 
 class SavedFragment : Fragment() {
+    private var _binding: FragmentSavedBinding? = null
 
-    private var _binding: FragmentDashboardBinding? = null
+    private lateinit var newsViewModel:NewsViewModel
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -23,20 +24,13 @@ class SavedFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val dashboardViewModel =
-            ViewModelProvider(this).get(SavedViewModel::class.java)
+            ViewModelProvider(this)[SavedViewModel::class.java]
 
-        _binding = FragmentDashboardBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        _binding = FragmentSavedBinding.inflate(inflater, container, false)
+//        newsViewModel=(activity as MainActivity).newsViewModel
+        val root: View = _binding!!.root
 
-        val textView: TextView = binding.textDashboard
-        dashboardViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
         return root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 }

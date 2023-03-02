@@ -3,7 +3,6 @@ package com.example.news.db
 import android.content.Context
 import androidx.room.*
 import com.example.news.model.Article
-import kotlin.coroutines.CoroutineContext
 
 @Database(
     entities = [Article::class],
@@ -11,26 +10,23 @@ import kotlin.coroutines.CoroutineContext
 )
 @TypeConverters(Converters::class)
 abstract class ArticleDB : RoomDatabase() {
-    abstract fun getArticle():ArticleDao
 
-    companion object{
+    abstract fun getArticleDao(): ArticleDao
+
+    companion object {
         @Volatile
-        private var privateInstance:ArticleDB?=null
-        private val LOCK =Any()
+        private var instance: ArticleDB? = null
+        private val LOCK = Any()
 
-        operator fun invoke(context: Context) = privateInstance ?: synchronized(LOCK){
-            privateInstance ?: createDB(context).also{
-                privateInstance = it
-            }
+        operator fun invoke(context: Context) = instance ?: synchronized(LOCK) {
+            instance ?: createDatabase(context).also { instance = it }
         }
 
-
-        private fun createDB(context: Context) =
+        private fun createDatabase(context: Context) =
             Room.databaseBuilder(
                 context.applicationContext,
                 ArticleDB::class.java,
                 "article_db.db"
             ).build()
     }
-
 }
