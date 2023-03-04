@@ -8,8 +8,11 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.news.MainActivity
+import com.example.news.Repo.NewsRpo
 import com.example.news.databinding.FragmentSavedBinding
+import com.example.news.db.ArticleDB
 import com.example.news.ui.NewsViewModel
+import com.example.news.ui.NewsViewModelProviderFactory
 
 class SavedFragment : Fragment() {
     private var _binding: FragmentSavedBinding? = null
@@ -23,11 +26,14 @@ class SavedFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val dashboardViewModel =
-            ViewModelProvider(this)[SavedViewModel::class.java]
-
         _binding = FragmentSavedBinding.inflate(inflater, container, false)
-//        newsViewModel=(activity as MainActivity).newsViewModel
+
+        val newsRepo=NewsRpo(ArticleDB(requireActivity()))
+        val viewModelProviderFactory=NewsViewModelProviderFactory(newsRepo)
+        newsViewModel=ViewModelProvider(this,viewModelProviderFactory)[NewsViewModel::class.java]
+
+
+
         val root: View = _binding!!.root
 
         return root
