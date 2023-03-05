@@ -10,7 +10,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.news.R
 import com.example.news.Repo.NewsRpo
 import com.example.news.adapters.NewsAdapters
 import com.example.news.databinding.FragmentHomeBinding
@@ -34,13 +36,23 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         val repository = NewsRpo(ArticleDB(requireActivity()))
         val viewModelProviderFactory= NewsViewModelProviderFactory(repository)
         homeViewModel= ViewModelProvider(this,viewModelProviderFactory)[NewsViewModel::class.java]
-
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
         setUpRecyclerView()
+
+        newsAdapters.setOnItemClickListener {
+
+            val bundle=Bundle().apply {
+                putSerializable("article",it)
+            }
+            findNavController().navigate(
+                R.id.action_navigation_home_to_articleFragment,
+                bundle,
+            )
+        }
         homeViewModel.breakingNews.observe(viewLifecycleOwner, Observer {response ->
 
             when(response){

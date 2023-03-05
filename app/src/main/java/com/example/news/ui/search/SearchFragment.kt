@@ -10,8 +10,10 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.news.MainActivity
+import com.example.news.R
 import com.example.news.Repo.NewsRpo
 import com.example.news.adapters.NewsAdapters
 import com.example.news.databinding.FragmentSearchedBinding
@@ -41,6 +43,15 @@ class SearchFragment : Fragment() {
         _binding = FragmentSearchedBinding.inflate(inflater, container, false)
         val root: View = binding.root
         setRecycle()
+        newsAdapters.setOnItemClickListener {
+            val bundle=Bundle().apply {
+                putSerializable("article",it)
+            }
+            findNavController().navigate(
+                R.id.action_searchFragment_to_articleFragment,
+                bundle
+            )
+        }
         var job : Job? = null
         _binding!!.etSearch.addTextChangedListener { editable ->
             job?.cancel()
@@ -52,6 +63,15 @@ class SearchFragment : Fragment() {
                     }
                 }
             }
+        }
+        newsAdapters.setOnItemClickListener {
+            val bundle=Bundle().apply {
+                putSerializable("article",it)
+            }
+            findNavController().navigate(
+                R.id.action_searchFragment_to_articleFragment,
+                bundle
+            )
         }
         val repository = NewsRpo(ArticleDB(requireActivity()))
         val viewModelProviderFactory=NewsViewModelProviderFactory(repository)

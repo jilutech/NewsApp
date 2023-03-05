@@ -20,15 +20,7 @@
             app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
-    <fragment
-        android:id="@+id/articleFragment"
-        android:name="com.example.news.ui.article.ArticleFragment"
-        android:label="fragment_article"
-        tools:layout="@layout/fragment_article" >
-        <argument
-            android:name="article"
-            app:argType="com.example.news.model.Article" />
-    </fragment>
+
     <fragment
         android:id="@+id/savedFragment"
         android:name="com.example.news.ui.saved.SavedFragment"
@@ -54,5 +46,14 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/articleFragment"
+        android:name="com.example.news.ui.article.ArticleFragment"
+        android:label="ArticleFragment"
+        tools:layout="@layout/fragment_article" >
+        <argument
+            android:name="article"
+            app:argType="com.example.news.model.Article" />
     </fragment>
 </navigation>

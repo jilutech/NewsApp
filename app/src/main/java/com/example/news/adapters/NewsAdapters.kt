@@ -1,6 +1,7 @@
 
 package com.example.news.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,6 +39,7 @@ class NewsAdapters : RecyclerView.Adapter<NewsAdapters.ArticleViewHolder>() {
              )
          )
     }
+    @SuppressLint("SuspiciousIndentation")
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
 
          val article=differ.currentList[position]
@@ -47,12 +49,12 @@ class NewsAdapters : RecyclerView.Adapter<NewsAdapters.ArticleViewHolder>() {
                 tvTitle.text=article.title
                 tvDescription.text=article.description
                 tvPublishedAt.text=article.publishedAt
-                setOnItemClickListener {
-                    onItemClickListener?.let {
-                          it(article)
-                    }
-                }
             }
+        holder.itemView.ivArticleImage.setOnClickListener {
+            onItemClickListener?.let {
+                it(article)
+            }
+        }
     }
     private var onItemClickListener: ((Article) -> Unit)?=null
     fun setOnItemClickListener(listener :(Article) -> Unit){
