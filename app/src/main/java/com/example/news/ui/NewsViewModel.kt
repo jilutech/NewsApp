@@ -1,8 +1,11 @@
 package com.example.news.ui
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.news.NewsApplication
 import com.example.news.Repo.NewsRpo
 import com.example.news.model.Article
 import com.example.news.model.NewsResponse
@@ -12,19 +15,26 @@ import retrofit2.Response
 import retrofit2.http.Query
 
 class NewsViewModel(
+    app:Application,
     val newsRepo: NewsRpo
-):ViewModel() {
+):AndroidViewModel(app) {
         val breakingNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
-        val breakingNewsPage=1
+        var breakingNewsPage=1
+
 
         val searchNews:MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
-        val searchNewsPage=1
+        var searchNewsPage=1
+
+
+        var breakingNewsResponse:NewsResponse?=null
+        var searchNewsResponse:NewsResponse?=null
     init {
         getBreakingNews("us")
     }
 
     fun getBreakingNews(countryCode: String) = viewModelScope.launch {
         breakingNews.postValue(Resource.Loading())
+//        getApplication<NewsApplication>()
         val response = newsRepo.getBreakingNews(countryCode, breakingNewsPage)
         breakingNews.postValue(handleBreakingNewsResponse(response))
     }
@@ -32,7 +42,18 @@ class NewsViewModel(
     private fun handleBreakingNewsResponse(response:retrofit2.Response<NewsResponse>):Resource<NewsResponse>{
         if (response != null){
             response?.body().let { resultResponse ->
-                return Resource.Success(resultResponse)
+                breakingNewsPage++
+                if (breakingNewsResponse == null){
+                    breakingNewsResponse=resultResponse
+                }else{
+                    val oldArticle = breakingNewsResponse?.articles
+                    val newArticle = resultResponse?.articles
+                    if (newArticle != null) {
+                        oldArticle?.addAll(newArticle)
+                    }
+
+                }
+                return Resource.Success(breakingNewsResponse ?: resultResponse)
             }
         }
         return Resource.Error(response.body(),response.message())
@@ -46,8 +67,22 @@ class NewsViewModel(
 
     private fun handleSearchNewsResponse(response: retrofit2.Response<NewsResponse>):Resource<NewsResponse>{
         if (response!=null){
-            response?.body().let { resultResponse ->
-                return Resource.Success(resultResponse)
+            response.body().let { resultResponse ->
+                searchNewsPage++
+
+                if (searchNewsResponse == null){
+                      searchNewsResponse=resultResponse
+
+                }else{
+
+                    val oldArti=searchNewsResponse?.articles
+                    val newArti=resultResponse?.articles
+                    if (newArti != null) {
+                        oldArti?.addAll(newArti)
+                    }
+
+                }
+                return Resource.Success(searchNewsResponse ?: resultResponse)
             }
         }
         return Resource.Error(response.body(),response.message())
